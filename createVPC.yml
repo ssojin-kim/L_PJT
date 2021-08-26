@@ -1,24 +1,22 @@
 ---
-
 - hosts: localhost
-
   become: yes
 
-
-
   tasks:
-
     - name: Create VPC
-
       ec2_vpc_net:
-
         name: Test VPC
-
-        cidr_block: 10.1.0.0/24
-
+        cidr_block: 10.1.0.0/16
         region: ap-northeast-2
-
         state: present
-
       register: vpc_result
 
+    - name: Create Public Subnet
+      ec2_vpc_subnet:
+        cidr: 10.1.0.0/24
+        vpc_id: "{{ vpc_result.vpc.id }}"
+        region: ap-northeast-2
+        az: ap-northeast-2a
+        map_public: yes
+        state: present
+      register: subnet_result
